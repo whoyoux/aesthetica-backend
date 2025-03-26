@@ -1,16 +1,15 @@
+//aesthetica backend
+
 import { Hono } from 'hono'
 import { etag } from 'hono/etag'
 import { logger } from 'hono/logger'
+import { csrf } from 'hono/csrf'
+import { cors } from 'hono/cors'
+import healthRoute from './routes/health.route';
 
 const app = new Hono()
-app.use(etag(), logger())
+  .use(csrf(), cors(), etag(), logger())
+  .route("/health", healthRoute)
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
-app.get('/status', (c) => {
-  return c.text('ok', 200)
-})
-
+export type AppType = typeof app;
 export default app
