@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { prisma } from "../lib/prisma";
-import type { PrismaClient } from "@prisma/client";
+import { checkDatabaseConnection } from "../lib/utils";
 
 const healthRoute = new Hono()
 	.get("/", async (c) => {
@@ -15,16 +15,3 @@ const healthRoute = new Hono()
 	});
 
 export default healthRoute;
-
-async function checkDatabaseConnection(prisma: PrismaClient): Promise<boolean> {
-	try {
-		// Attempt to query the database.  A simple `SELECT 1` equivalent.
-		await prisma.$queryRaw`SELECT 1`;
-		return true; // Connection is good
-	} catch (error) {
-		console.error("Database connection error:", error);
-		return false; // Connection failed
-	} finally {
-		await prisma.$disconnect(); // Ensure disconnection after the check
-	}
-}
